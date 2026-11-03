@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src https://tycg.zjnu.edu.cn; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="浙师大综合馆、北田羽毛球馆场地查询。粘贴预约链接，按日期查看余量，手动选择并确认预约。">
+  <title>浙师大羽毛球 · 综合馆 / 北田馆</title>
+  <style>
+    :root{color-scheme:light;--ink:#193c32;--muted:#758078;--green:#24634c;--line:#e2e7de;--paper:#fff;--background:#f5f6f0}
+    *{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--background);font-family:"Segoe UI","Microsoft YaHei UI","PingFang SC",sans-serif;-webkit-font-smoothing:antialiased}
+    button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:wait;opacity:.65}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #89bb9f;outline-offset:4px}[hidden]{display:none!important}
+    .page{max-width:1024px;margin:auto;padding:32px 40px 24px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:11px;font-size:14px;font-weight:650}.brand-icon{width:36px;height:36px;display:grid;place-items:center;background:var(--ink);color:#c8efb8;border-radius:12px}.brand-icon svg{width:23px;height:23px}.top-note{font-size:12px;color:var(--muted)}
+    .hero{padding:61px 0 31px}.eyebrow{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650;color:var(--green);letter-spacing:1px}.dot{width:7px;height:7px;background:#70ad72;border-radius:50%}h1{margin:13px 0 12px;font-size:38px;letter-spacing:-1.2px;line-height:1.3;font-weight:750}.hero p{margin:0;font-size:14px;line-height:1.8;color:var(--muted)}
+    .input-card{background:var(--paper);border:1px solid var(--line);border-radius:21px;padding:26px 28px;box-shadow:0 5px 20px #173b2904}.input-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:15px}.input-heading label{font-size:15px;font-weight:650}.auto-pill{font-size:11px;color:#598062;background:#f0f7eb;padding:5px 10px;border-radius:20px;white-space:nowrap}.input-row{display:flex;gap:10px}.input-wrap{display:flex;align-items:center;gap:10px;flex:1;min-width:0;background:#f7f8f5;border:1px solid #e0e5dc;border-radius:11px;padding:0 15px}.input-wrap:focus-within{border-color:#6e9d7f;box-shadow:0 0 0 3px #d6e8d550}.input-wrap svg{width:18px;height:18px;color:#91a08f;flex-shrink:0}#link-input{width:100%;height:52px;min-width:0;background:none;border:0;outline:none!important;color:var(--ink);font-size:14px}#link-input::placeholder{font-size:13px;color:#98a095}.clear{flex-shrink:0;border:0;background:none;color:#849181;font-size:12px;padding:8px 0 8px 8px}.primary{border:0;background:var(--ink);color:white;border-radius:11px;min-width:106px;padding:0 23px;font-size:13px;font-weight:650;transition:background .15s}.primary:hover{background:#2b5b47}.input-foot{display:flex;align-items:center;gap:7px;color:#8b9489;font-size:11px;margin-top:14px;line-height:1.6}.input-foot svg{width:13px;height:13px;flex-shrink:0}
+    .notice{border-radius:12px;margin-top:16px;padding:13px 16px;font-size:13px;line-height:1.7;background:#eef3e9;color:#537252}.notice.error{background:#fff1e9;color:#a24e2b;border:1px solid #f1ddd0}.notice.loading{display:flex;align-items:center;gap:10px}.spinner{display:inline-block;width:15px;height:15px;border:2px solid #bfd0bd;border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}@keyframes spin{to{transform:rotate(360deg)}}
+    .empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:64px 24px 66px;color:var(--muted)}.empty-symbol{position:relative;width:68px;height:68px;border:1px solid #dce5d5;border-radius:50%;display:grid;place-items:center;color:#91a989;background:#edf2e6;margin-bottom:18px}.empty-symbol svg{width:33px;height:33px}.empty strong{color:#6c7e68;font-size:14px;font-weight:550}.empty p{font-size:12px;line-height:1.8;margin:9px 0 0;color:#929b8d}
+    .results{margin-top:35px}.results-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.results-title{margin:0;font-size:18px;font-weight:700}.checked{margin-top:7px;font-size:11px;color:#899484}.refresh{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid #d9e2d3;border-radius:9px;color:#4a6b4e;padding:9px 12px;font-size:12px;white-space:nowrap}.refresh:hover{background:#eaf0e3}.refresh svg{width:13px;height:13px}.day-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}.day{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--paper)}.day-head{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#edf2e8;padding:19px 22px}.day-title{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}.day-title h3{font-size:16px;font-weight:700;margin:0}.weekday{font-size:11px;color:#7e8e76}.day-count{font-size:11px;color:#5b7951;white-space:nowrap}.slot{padding:21px 22px;border-top:1px solid #eef0e9}.slot-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.slot-time{font-size:20px;letter-spacing:-.6px;font-weight:650;font-variant-numeric:tabular-nums}.started{font-size:10px;background:#fff2dc;color:#ac7521;padding:3px 7px;border-radius:5px}.price{margin-left:auto;color:#8a9684;font-size:11px}.courts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.court{display:inline-flex;align-items:center;gap:5px;color:#376348;background:#f0f6ec;border:1px solid #dce9d5;border-radius:8px;padding:7px 11px;font-size:12px}.court-price{font-size:10px;color:#72916b}.day-empty{padding:30px 22px;font-size:13px;color:#929b8b;line-height:1.8}.day-empty span{display:block;font-size:11px;margin-top:4px;color:#a1a899}.result-note{margin:16px 2px 0;font-size:11px;color:#929b8b;line-height:1.8}
+    footer{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);margin-top:32px;padding-top:20px;color:#98a08f;font-size:11px;line-height:1.7}footer a{color:#718569;text-decoration:none}footer a:hover{text-decoration:underline}
+    .court:hover{background:#e1edda;border-color:#8dab7d}.court.selected{background:var(--ink);border-color:var(--ink);color:white}.court.selected .court-price{color:#c8dfbb}.court.booked{background:#ecefe8;color:#8d9a85;border-color:#e1e6dc;cursor:default}.court:disabled{cursor:default;opacity:.65}.selection{position:sticky;bottom:16px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:18px;background:white;border:1px solid #b7ccb0;border-radius:15px;padding:19px 22px;margin-top:22px;box-shadow:0 8px 30px #173b2910}.selection-title{font-size:12px;color:#718469}.selection-detail{font-size:14px;font-weight:650;margin-top:6px;line-height:1.7}.selection-actions{display:flex;gap:10px;align-items:center}.selection .primary{min-height:43px;white-space:nowrap}.secondary{border:1px solid #d9e2d3;border-radius:9px;background:white;color:#53734e;padding:11px 14px;font-size:12px;white-space:nowrap}.secondary:hover{background:#f2f5ed}
+    dialog{width:min(560px,calc(100% - 32px));border:1px solid var(--line);border-radius:20px;padding:0;color:var(--ink);max-height:90vh;box-shadow:0 24px 80px #193c3233}dialog::backdrop{background:#15372666;backdrop-filter:blur(3px)}.dialog-body{padding:27px 27px 20px}dialog h2{font-size:21px;margin:0 0 9px}.dialog-subtitle{font-size:12px;color:var(--muted);margin:0 0 20px;line-height:1.8}.booking-summary{padding:17px 19px;background:#f0f5eb;border-radius:12px;font-size:14px;line-height:2}.booking-status{margin-top:14px;font-size:13px;line-height:1.8;color:#63795c}.booking-status.error{color:#a24e2b}.rules{margin-top:15px;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.8}.rules summary{cursor:pointer;font-weight:650}.rules pre{white-space:pre-wrap;word-break:break-word;font:inherit;margin:10px 0 0;color:#7c8775;max-height:150px;overflow:auto}.site-policy{margin:15px 0 0;font-size:11px;color:#a47739;background:#fff5e4;border-radius:9px;padding:10px 12px;line-height:1.9}.agreement{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.8;margin-top:18px;color:#65785c}.agreement input{accent-color:var(--green);margin-top:4px}.dialog-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:21px}.dialog-actions .primary{min-height:44px;flex:1}.official-link{color:#56784e;font-size:12px;text-decoration:none;display:inline-block;padding:10px 0;margin-right:auto}.official-link:hover{text-decoration:underline}.selection-note{font-size:11px;color:#87967d;margin-top:5px;line-height:1.7}
+    @media(max-width:660px){.page{padding:23px 20px 22px}.top-note{display:none}.hero{padding:43px 0 25px}h1{font-size:31px}.hero p{font-size:13px}.input-card{padding:21px 19px;border-radius:17px}.input-row{flex-direction:column;gap:9px}.primary{height:44px}.input-wrap{padding:0 12px}.input-heading{gap:8px}.input-heading label{font-size:14px}.auto-pill{font-size:10px}.day-grid{grid-template-columns:1fr}.empty{padding:46px 20px}.results{margin-top:27px}.results-title{font-size:17px}.day-head{padding:17px 20px}.slot{padding:19px 20px}footer{align-items:flex-start}.input-foot{font-size:10px}}
+    @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+    @media(max-width:660px){.selection{bottom:10px;flex-direction:column;align-items:stretch;padding:16px 18px;gap:12px}.selection-actions{justify-content:flex-end}.selection-actions .primary{flex:1}.dialog-body{padding:23px 20px}.dialog-actions{gap:8px}.dialog-actions .official-link{width:100%}.selection-detail{font-size:13px}}
+    .venues{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 21px}.venue-option{text-align:left;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #dce4d5;border-radius:14px;padding:17px 20px;color:#7f8f78;background:#f9faf6;transition:background .15s,border-color .15s}.venue-option strong{display:block;font-size:16px;font-weight:700}.venue-option small{display:block;font-size:11px;font-weight:400;margin-top:6px}.venue-option .venue-mark{height:21px;width:21px;border-radius:50%;border:1px solid #d1dcc8;display:grid;place-items:center;font-size:12px;color:transparent;flex-shrink:0}.venue-option[aria-pressed="true"]{background:#e9f1e2;border-color:#9bb88d;color:var(--ink)}.venue-option[aria-pressed="true"] .venue-mark{background:var(--green);color:white;border-color:var(--green)}.venue-option:hover{border-color:#9bb88d}.venue-option:disabled{cursor:wait}.connection-help{margin:9px 2px 0;color:#8d9788;font-size:11px;line-height:1.8}.connection-help a{color:#607f58;text-decoration:none}.connection-help a:hover{text-decoration:underline}
+    @media(max-width:660px){.venue-option{padding:15px 16px}.venue-option strong{font-size:15px}.venues{gap:10px;margin-bottom:18px}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m10 19 8-13 3 1 5 11-10 6zM12 16l10 5M15 11l10 7M18 7l-2 17M11 19l5 5-3 3a3.5 3.5 0 0 1-5-5z"/></svg></span>浙师大 · 场地查询</div>
+      <span class="top-note">综合馆 / 北田馆</span>
+    </header>
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span>下一场，去打球</div>
+      <h1 id="venue-heading">综合馆羽毛球</h1>
+      <p>粘贴预约链接，选择场地和时段，再确认预约。</p>
+    </section>
+    <nav class="venues" aria-label="选择羽毛球馆">
+      <button class="venue-option" id="venue-main" type="button" aria-pressed="true"><span><strong>综合馆</strong><small>综合馆羽毛球馆 · 6 片场地</small></span><span class="venue-mark" aria-hidden="true">✓</span></button>
+      <button class="venue-option" id="venue-beitian" type="button" aria-pressed="false"><span><strong>北田馆</strong><small>北田羽毛球馆 · 9 片场地</small></span><span class="venue-mark" aria-hidden="true">✓</span></button>
+    </nav>
+    <section class="input-card" aria-label="查询场地">
+      <div class="input-heading"><label for="link-input">粘贴你的预约链接</label><span class="auto-pill">粘贴后自动查询</span></div>
+      <div class="input-row">
+        <div class="input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="m10 13 4-4m-6 6-1.5 1.5a4 4 0 0 1-5.5-5.8L6 6a4 4 0 0 1 5.6 0m1 11a4 4 0 0 0 5.7 0l4.7-4.7a4 4 0 0 0-5.7-5.6L16 8" transform="translate(0 1) scale(.92)"/></svg>
+          <input id="link-input" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="在这里粘贴完整的预约网页链接" aria-describedby="input-help" maxlength="20000">
+          <button class="clear" id="clear" type="button" hidden>清空</button>
+        </div>
+        <button class="primary" id="query" type="button">查询场地</button>
+      </div>
+      <div class="input-foot" id="input-help"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true"><rect x="3.5" y="7" width="9" height="7" rx="1.5"/><path d="M5.5 7V4a2.5 2.5 0 0 1 5 0v3"/></svg>链接仅用于本次查询，关闭或刷新页面后清除。</div>
+    </section>
+    <p class="connection-help">需要当前网络能够访问学校预约网站。<a href="https://tycg.zjnu.edu.cn/h5/index.html?v=4/" target="_blank" rel="noreferrer noopener">检查是否能打开 ↗</a></p>
+    <div class="notice" id="notice" role="status" aria-live="polite" hidden></div>
+    <section class="empty" id="empty">
+      <div class="empty-symbol" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="7" width="28" height="26" rx="2"/><path d="M6 20h28M20 7v26M11 7v26M29 7v26M11 12h18M11 28h18"/></svg></div>
+      <strong>场地信息，粘贴即见</strong>
+      <p>自动读取当前开放日期<br>按时段列出可选场地号</p>
+    </section>
+    <section class="results" id="results" aria-label="可预约场地" hidden>
+      <div class="results-heading"><div><h2 class="results-title" id="results-title">可约场地</h2><div class="checked" id="checked"></div></div><button class="refresh" id="refresh" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 6A5.5 5.5 0 1 0 13 11M13.5 2v4h-4"/></svg>刷新余量</button></div>
+      <div class="day-grid" id="days"></div>
+      <p class="result-note">点击场地号进行选择，每次选择 1 片场地、1 个时段。提交前会重新核对余量。</p>
+    </section>
+    <section class="selection" id="selection" aria-label="已选场地" hidden>
+      <div><div class="selection-title">已选场地</div><div class="selection-detail" id="selection-detail"></div><div class="selection-note">选择场地后，需在下一步手动确认才会提交预约。</div></div>
+      <div class="selection-actions"><button class="secondary" id="unselect" type="button">取消选择</button><button class="primary" id="continue-booking" type="button">下一步</button></div>
+    </section>
+    <footer><span>浙江师范大学 · 综合馆 / 北田羽毛球馆</span><a href="https://tycg.zjnu.edu.cn/h5/index.html?v=4/" target="_blank" rel="noreferrer noopener">打开预约网站 ↗</a></footer>
+  </main>
+  <dialog id="booking-dialog" aria-labelledby="booking-title">
+    <div class="dialog-body">
+      <h2 id="booking-title">核对预约信息</h2>
+      <p class="dialog-subtitle" id="booking-subtitle">使用粘贴链接对应的账号，为本人预约综合馆羽毛球场。</p>
+      <div class="booking-summary" id="booking-summary"></div>
+      <div class="booking-status" id="booking-status" role="status" aria-live="polite"></div>
+      <p class="site-policy">场馆须知明确禁止外挂、脚本、连点器、自动化框架及第三方抢票程序，并提示可能封号。你也可以选择“到官网预约”，使用官方流程。</p>
+      <details class="rules" open><summary>预约须知 · 场馆原文</summary><pre id="purchase-rules">正在读取…</pre></details>
+      <details class="rules"><summary>用户须知 · 场馆原文</summary><pre id="user-rules">正在读取…</pre></details>
+      <label class="agreement"><input id="agree-booking" type="checkbox"><span>我已阅读并接受场馆须知，确认以上预约信息。</span></label>
+      <div class="dialog-actions"><a class="official-link" id="official-booking" href="https://tycg.zjnu.edu.cn/h5/index.html?v=4/" target="_blank" rel="noreferrer noopener">到官网预约 ↗</a><button class="secondary" id="close-booking" type="button">返回</button><button class="primary" id="confirm-booking" type="button" disabled>确认预约</button></div>
+    </div>
+  </dialog>
+  <script>
+  'use strict';
+  (() => {
+    const ORIGIN = 'https://tycg.zjnu.edu.cn';
+    const ALLOWED = new Set(['/api/court/index','/api/court/getTwoDaysDate','/api/court/getFieldNoList','/api/court/getCourtPrice','/api/court/getCourtProduct','/api/conf/pay_list']);
+    const VENUES = Object.freeze({main:{name:'综合馆羽毛球馆',heading:'综合馆羽毛球',short:'综合馆',button:'venue-main'},beitian:{name:'北田羽毛球馆',heading:'北田馆羽毛球',short:'北田馆',button:'venue-beitian'}});
+    let venueKey = 'main';
+    const $ = id => document.getElementById(id);
+    const input = $('link-input');
+    let timer, controller, requestVersion = 0;
+    let snapshot = null, selected = null, review = null, bookingPhase = '', submissionUncertain = false;
+    let courtButtons = [];
+    const beijing = new Intl.DateTimeFormat('sv-SE', {timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'});
+    const stamp = new Intl.DateTimeFormat('zh-CN', {timeZone:'Asia/Shanghai',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+
+    function note(message, type = '') {
+      const el = $('notice');
+      el.replaceChildren();
+      el.hidden = !message;
+      el.className = 'notice ' + type;
+      if (type === 'loading') { const spin = document.createElement('span'); spin.className = 'spinner'; spin.setAttribute('aria-hidden','true'); el.append(spin); }
+      el.append(document.createTextNode(message));
+    }
+    function loading(value) {
+      $('query').disabled = value;
+      $('refresh').disabled = value;
+      $('query').textContent = value ? '查询中…' : '查询场地';
+      $('results').setAttribute('aria-busy',String(value));
+    }
+    function resetResult() { $('results').hidden = true; $('days').replaceChildren(); $('empty').hidden = false; snapshot = null; clearSelection(); courtButtons = []; }
+    function clearSelection() { selected = null; review = null; $('selection').hidden = true; courtButtons.forEach(({button}) => { button.className = 'court'; button.setAttribute('aria-pressed','false'); }); }
+    function officialURL(token) { return ORIGIN + '/h5/index.html?v=4/#/?token=' + encodeURIComponent(token); }
+    function summaryText(item) { return (item.venueName || VENUES[venueKey].name) + '　' + item.date + '　' + item.start + '–' + item.end + '　' + item.number + ' 号场　' + money(item.time_price); }
+    function switchVenue(key) {
+      if (!VENUES[key] || venueKey === key || bookingPhase === 'preparing' || bookingPhase === 'submitting') return;
+      venueKey = key;
+      for (const [candidate,venue] of Object.entries(VENUES)) $(venue.button).setAttribute('aria-pressed',String(candidate === key));
+      $('venue-heading').textContent = VENUES[key].heading;
+      onInput();
+      if (input.value.trim()) { clearTimeout(timer); run(); }
+    }
+    function choose(item) {
+      if (bookingPhase || submissionUncertain || !snapshot) { if (submissionUncertain) note('上次预约结果尚未确认，请先到官方“我的场地”查看，勿重复提交。','error'); return; }
+      if (item.venueKey !== snapshot.venueKey || item.venueKey !== venueKey) return;
+      if (selected?.key === item.key) { clearSelection(); return; }
+      selected = item; review = null;
+      courtButtons.forEach(({button,key}) => { button.className = key === item.key ? 'court selected' : 'court'; button.setAttribute('aria-pressed',String(key === item.key)); });
+      $('selection-detail').textContent = summaryText(item);
+      $('selection').hidden = false;
+    }
+    function bookingStatus(message, error = false) { $('booking-status').textContent = message; $('booking-status').className = 'booking-status' + (error ? ' error' : ''); }
+    function bookingBusy(value) {
+      input.disabled = value; $('clear').disabled = value; $('query').disabled = value; $('refresh').disabled = value;
+      $('unselect').disabled = value; $('continue-booking').disabled = value; $('close-booking').disabled = value;
+      $('agree-booking').disabled = value;
+      for (const venue of Object.values(VENUES)) $(venue.button).disabled = value;
+      courtButtons.forEach(({button}) => { button.disabled = value; });
+    }
+    function confirmState() { $('confirm-booking').disabled = bookingPhase !== 'review' || !review?.ready || !$('agree-booking').checked || submissionUncertain; }
+    function plainRules(html) { return new DOMParser().parseFromString(String(html || '').replace(/<br\s*\/?>/gi,'\n').replace(/<\/p\s*>/gi,'\n'), 'text/html').body.textContent.trim(); }
+    function tokenFromLink(value) {
+      let text = value.trim();
+      const markdown = text.match(/\]\((https:\/\/[^\s)]+)\)\s*$/);
+      if (markdown) text = markdown[1];
+      if (text.startsWith('<') && text.endsWith('>')) text = text.slice(1,-1);
+      let url;
+      try { url = new URL(text); } catch { throw new Error('请粘贴完整的浙师大预约网页链接。'); }
+      if (url.protocol !== 'https:' || url.hostname !== 'tycg.zjnu.edu.cn' || url.port || url.username || url.password) throw new Error('请使用 tycg.zjnu.edu.cn 的预约网页链接。');
+      const queryAt = url.hash.indexOf('?');
+      const hashParams = new URLSearchParams(queryAt < 0 ? '' : url.hash.slice(queryAt + 1));
+      const token = hashParams.get('token') || url.searchParams.get('token');
+      if (!token || !/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(token)) throw new Error('链接缺少有效的登录信息，请重新复制完整链接。');
+      let claims;
+      try { claims = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0)))); }
+      catch { throw new Error('登录信息无法识别，请重新复制预约链接。'); }
+      if (!Number.isFinite(claims.exp) || claims.exp * 1000 <= Date.now()) throw new Error('这个登录链接已过期，请从预约网站复制一个新链接。');
+      if (Number.isFinite(claims.nbf) && claims.nbf * 1000 > Date.now()) throw new Error('这个链接尚未生效，请检查设备时间，或重新获取链接。');
+      return token;
+    }
+    async function query(route, params, token, signal) {
+      if (!ALLOWED.has(route)) throw new Error('查询地址无法识别。');
+      const url = new URL(route, ORIGIN);
+      const post = route === '/api/court/index';
+      if (!post) Object.entries(params).forEach(([key,value]) => url.searchParams.set(key,value));
+      const response = await fetch(url, {method:post ? 'POST':'GET',headers:{Authorization:token,...(post ? {'Content-Type':'application/json'} : {})},...(post ? {body:JSON.stringify(params)} : {}),signal,credentials:'omit',referrerPolicy:'no-referrer',redirect:'error',cache:'no-store'});
+      if (response.status === 401 || response.status === 403) throw new Error('登录链接已失效，请重新复制一个新链接。');
+      if (!response.ok) throw new Error('预约网站暂时无法查询，请稍后重试。');
+      let result;
+      try { result = await response.json(); } catch { throw new Error('预约网站返回异常，请稍后重试。'); }
+      if (result.code !== 1) throw new Error('查询未成功，请检查链接是否有效，或稍后重试。');
+      return result.data;
+    }
+    function node(tag, className, text) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text != null) el.textContent = text;
+      return el;
+    }
+    function money(value) { const n = Number(value); return n === 0 ? '免费' : '¥' + n.toFixed(2).replace(/\.00$/,''); }
+    function currentContext() {
+      const token = tokenFromLink(input.value);
+      if (!snapshot || snapshot.token !== token || snapshot.version !== requestVersion || snapshot.venueKey !== venueKey) throw new Error('场馆、链接或查询结果已变化，请重新查询并选择场地。');
+      return snapshot;
+    }
+    async function freshSelection(item, context, signal) {
+      if (Date.parse(item.date + 'T' + item.end + ':00+08:00') <= Date.now()) throw new Error('这个时段已经结束，请重新选择。');
+      const grid = await query('/api/court/getCourtPrice',{product_id:context.courtId,venue_id:236,date:item.date},context.token,signal);
+      if (!Array.isArray(grid?.result)) throw new Error('余量暂时无法核实，请稍后重新查询。');
+      const row = grid.result.find(row => row.start_time === item.start && row.end_time === item.end);
+      const slot = row?.fieldlist_s?.find(slot => String(slot.price_id) === String(item.price_id) && String(slot.field_id) === String(item.field_id));
+      if (!slot || slot.lock || !(Number(slot.leftNum) > 0)) throw new Error('所选场地已不可约，请返回后刷新余量。');
+      if (slot.time_price == null || !Number.isFinite(Number(slot.time_price)) || Number(slot.time_price) !== Number(item.time_price) || String(slot.field_type) !== String(item.field_type) || String(slot.time_id) !== String(item.time_id) || String(row.meal_id) !== String(item.meal_id)) throw new Error('所选时段的信息或费用发生变化，请返回后重新查询。');
+      return slot;
+    }
+    async function prepareBooking() {
+      if (!selected || bookingPhase || submissionUncertain) return;
+      const item = selected;
+      let context;
+      try { context = currentContext(); } catch (error) { note(error.message,'error'); return; }
+      if (![item.price_id,item.field_id,item.time_id,item.meal_id,context.courtId].every(value => /^\d+$/.test(String(value)) && Number(value) > 0) || item.time_price == null || !Number.isFinite(Number(item.time_price))) { note('所选场地缺少完整预约信息，请到官网预约。','error'); return; }
+      bookingPhase = 'preparing'; review = null; bookingBusy(true); confirmState();
+      $('agree-booking').checked = false;
+      $('booking-summary').textContent = summaryText(item);
+      $('booking-subtitle').textContent = '使用粘贴链接对应的账号，为本人预约' + context.venueName + '。';
+      $('purchase-rules').textContent = '正在读取…'; $('user-rules').textContent = '正在读取…';
+      $('official-booking').href = officialURL(context.token);
+      bookingStatus('正在核对实时余量和场馆须知…');
+      $('booking-dialog').showModal();
+      const abort = new AbortController();
+      const timeout = setTimeout(() => abort.abort(),20000);
+      try {
+        const [productData,payConfig] = await Promise.all([
+          query('/api/court/getCourtProduct',{product_id:context.courtId},context.token,abort.signal),
+          query('/api/conf/pay_list',{},context.token,abort.signal),
+          freshSelection(item,context,abort.signal)
+        ]);
+        currentContext();
+        const product = productData?.result;
+        if (!product || product.court_name !== context.venueName) throw new Error('场馆信息无法确认，请到官网预约。');
+        const purchase = plainRules(product.purchase_des), rules = plainRules(product.user_instruction);
+        if (!purchase || !rules) throw new Error('场馆须知未能完整读取，请到官网预约。');
+        $('purchase-rules').textContent = purchase; $('user-rules').textContent = rules;
+        if (!(Number(product.maxbooknum_s) >= 1) || !(Number(product.maxbooknum_as) >= 1)) throw new Error('网站当前不允许预约这个场地，请到官网查看。');
+        if (Number(item.time_price) !== 0 || String(item.field_type) !== '1' || !/免费/.test(String(payConfig?.list?.[0] || ''))) throw new Error('该预约需要其他支付方式，请到官网确认并完成预约。');
+        review = {ready:true,item,context};
+        bookingStatus('余量已核对。本次费用为 ¥0.00，点击“确认预约”将真实提交。' + (Date.parse(item.date + 'T' + item.start + ':00+08:00') <= Date.now() ? ' 此时段已经开始，请确认能按场馆规定入场。' : ''));
+      } catch (error) {
+        abort.abort();
+        review = null;
+        bookingStatus(error.name === 'AbortError' ? '核对超时，请返回后重试。' : error instanceof TypeError ? '连接网站失败，请返回后重试。' : error.message,true);
+      } finally { clearTimeout(timeout); bookingPhase = 'review'; bookingBusy(false); confirmState(); }
+    }
+    async function submitBooking() {
+      if (bookingPhase !== 'review' || !review?.ready || !$('agree-booking').checked || submissionUncertain || !$('booking-dialog').open) return;
+      const {item,context} = review;
+      bookingPhase = 'submitting'; bookingBusy(true); confirmState();
+      $('confirm-booking').textContent = '正在提交…';
+      bookingStatus('正在再次核对余量，请稍候…');
+      const abort = new AbortController();
+      const timeout = setTimeout(() => abort.abort(),25000);
+      let sent = false;
+      try {
+        if (currentContext() !== context || selected !== item) throw new Error('所选场地已变化，请返回重新选择。');
+        await freshSelection(item,context,abort.signal);
+        if (currentContext() !== context || selected !== item) throw new Error('链接或所选场地已变化，请重新查询。');
+        const other = {price_ids:String(item.price_id),time_ids:String(item.time_id),field_ids:String(item.field_id),price:String(item.time_price),court_id:context.courtId,meal_id:item.meal_id,field_type:item.field_type};
+        const payload = {goods_id:context.courtId,order_type:3,pay_way:'0',other_param:JSON.stringify(other),choose_date:item.date};
+        bookingStatus('正在提交预约，请勿重复操作…');
+        // This is the only reservation request. It runs once, after the user's final confirmation.
+        sent = true;
+        const response = await fetch(ORIGIN + '/api/pay/CreateOrder',{method:'POST',headers:{Authorization:context.token,'Content-Type':'application/json'},body:JSON.stringify(payload),signal:abort.signal,credentials:'omit',referrerPolicy:'no-referrer',redirect:'error',cache:'no-store'});
+        if (response.status === 401 || response.status === 403) { const error = new Error('登录已失效，请重新获取链接后查询。'); error.definite = true; throw error; }
+        if (!response.ok) throw new Error('无法确认服务器是否已处理预约。');
+        const result = await response.json();
+        if (result.code !== 1) {
+          const reason = typeof result.info === 'string' ? result.info.replaceAll(context.token,'[登录信息]').slice(0,180) : '请到官网查看原因。';
+          const error = new Error('预约未成功：' + reason); error.definite = true; throw error;
+        }
+        const message = result.data?.pay_url ? '订单已创建，请到官方预约网站确认订单状态。' : '预约成功：' + summaryText(item) + '。请到官方“我的场地”查看预约码。';
+        bookingPhase = ''; clearSelection();
+        courtButtons = courtButtons.filter(({button,key}) => { if (key !== item.key) return true; button.disabled = true; button.className = 'court booked'; button.textContent = item.number + ' 号场 · 已预约'; return false; });
+        $('booking-dialog').close(); note(message);
+        const official = node('a','official-link','打开官方预约网站 ↗'); official.href = officialURL(context.token); official.target = '_blank'; official.rel = 'noreferrer noopener';
+        $('notice').append(node('br'),official);
+      } catch (error) {
+        if (sent && !error.definite) {
+          submissionUncertain = true; review = null;
+          bookingStatus('提交结果尚未确认。请先到官方“我的场地”核实，勿重复提交。本页已暂停再次预约。',true);
+          note('上次预约结果尚未确认，请先到官方“我的场地”查看，勿重复提交。','error');
+        } else { review = null; bookingStatus(error.name === 'AbortError' ? '核对超时，本次尚未提交。请返回重试。' : error instanceof TypeError ? '连接网站失败，本次尚未提交。请返回重试。' : error.message,true); }
+      } finally {
+        clearTimeout(timeout);
+        if (bookingPhase === 'submitting') bookingPhase = 'review';
+        bookingBusy(false); confirmState(); $('confirm-booking').textContent = '确认预约';
+      }
+    }
+    function render(days, fields, checkedAt) {
+      courtButtons = [];
+      const fieldNames = new Map(fields.map(field => [String(field.id),String(field.seat_number)]));
+      const now = Date.now();
+      const today = beijing.format(now);
+      const tomorrow = beijing.format(now + 86400000);
+      const fragment = document.createDocumentFragment();
+      let count = 0;
+      for (const day of days) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(day.date) || !Array.isArray(day.grid?.result)) throw new Error('场地数据格式有变化，请稍后重试。');
+        const slots = [];
+        for (const row of day.grid.result) {
+          if (!/^\d{2}:\d{2}$/.test(row.start_time) || !/^\d{2}:\d{2}$/.test(row.end_time) || !Array.isArray(row.fieldlist_s)) throw new Error('时段数据格式有变化，请稍后重试。');
+          const start = Date.parse(day.date + 'T' + row.start_time + ':00+08:00');
+          const end = Date.parse(day.date + 'T' + row.end_time + ':00+08:00');
+          if (!Number.isFinite(start) || !Number.isFinite(end)) throw new Error('时段信息无法识别。');
+          if (end <= now) continue;
+          const available = row.fieldlist_s.filter(slot => !slot.lock && Number(slot.leftNum) > 0);
+          if (available.some(slot => !fieldNames.has(String(slot.field_id)))) throw new Error('场地编号发生变化，请重新查询。');
+          if (available.length) slots.push({row,available,started:start <= now});
+        }
+        count += slots.length;
+        const card = node('article','day');
+        const head = node('div','day-head');
+        const title = node('div','day-title');
+        const parts = day.date.split('-').map(Number);
+        title.append(node('h3','',(day.date === today ? '今天 · ' : day.date === tomorrow ? '明天 · ' : '') + parts[1] + '月' + parts[2] + '日'),node('span','weekday',day.week || ''));
+        head.append(title,node('span','day-count',slots.length ? slots.length + ' 个可约时段' : '暂无可约时段'));
+        card.append(head);
+        for (const {row,available,started} of slots) {
+          const item = node('div','slot');
+          const top = node('div','slot-top');
+          top.append(node('span','slot-time',row.start_time + '–' + row.end_time));
+          if (started) top.append(node('span','started','已开始'));
+          const validPrice = available.every(slot => slot.time_price != null && slot.time_price !== '' && Number.isFinite(Number(slot.time_price)));
+          const samePrice = validPrice && available.every(slot => Number(slot.time_price) === Number(available[0].time_price));
+          if (samePrice) top.append(node('span','price',money(available[0].time_price)));
+          const courts = node('div','courts');
+          available.forEach(slot => {
+            const chip = node('button','court',fieldNames.get(String(slot.field_id)) + ' 号场');
+            chip.type = 'button'; chip.setAttribute('aria-pressed','false');
+            const item = {key:venueKey + '|' + day.date + '|' + slot.field_id + '|' + slot.price_id,venueKey,venueName:VENUES[venueKey].name,date:day.date,start:row.start_time,end:row.end_time,number:fieldNames.get(String(slot.field_id)),price_id:slot.price_id,field_id:slot.field_id,time_id:slot.time_id,meal_id:row.meal_id,field_type:slot.field_type,time_price:slot.time_price};
+            chip.setAttribute('aria-label','选择 ' + day.date + ' ' + row.start_time + '至' + row.end_time + ' ' + item.number + '号场');
+            courtButtons.push({button:chip,key:item.key});
+            chip.addEventListener('click',() => choose(item));
+            if (validPrice && !samePrice) chip.append(node('span','court-price',money(slot.time_price)));
+            courts.append(chip);
+          });
+          item.append(top,courts); card.append(item);
+        }
+        if (!slots.length) { const blank = node('div','day-empty','这天暂时没有可约场地'); blank.append(node('span','','可以稍后刷新余量。')); card.append(blank); }
+        fragment.append(card);
+      }
+      $('days').replaceChildren(fragment);
+      $('results-title').textContent = VENUES[venueKey].short + ' · ' + (count ? count + ' 个可约时段' : '暂时没有可约场地');
+      $('checked').textContent = '更新于 ' + stamp.format(checkedAt) + ' · 北京时间';
+      $('empty').hidden = true;
+      $('results').hidden = false;
+      if (!days.length) note('预约网站当前没有开放的预约日期。');
+      else note('');
+    }
+    async function run() {
+      if (bookingPhase === 'preparing' || bookingPhase === 'submitting') return;
+      clearTimeout(timer);
+      const version = ++requestVersion;
+      const queriedVenueKey = venueKey;
+      const venue = VENUES[queriedVenueKey];
+      controller?.abort();
+      controller = null;
+      resetResult();
+      let token;
+      try { token = tokenFromLink(input.value); } catch (error) { note(error.message,'error'); loading(false); return; }
+      const active = new AbortController();
+      controller = active;
+      let timedOut = false;
+      const timeout = setTimeout(() => { timedOut = true; active.abort(); },30000);
+      loading(true); $('empty').hidden = true;
+      note('正在获取' + venue.name + '场地…','loading');
+      try {
+        const listing = await query('/api/court/index',{page:1,limit:100},token,active.signal);
+        if (!Array.isArray(listing?.data)) throw new Error('场馆列表暂时无法读取，请稍后重试。');
+        const matches = listing.data.filter(court => court.court_name === venue.name);
+        if (matches.length !== 1) throw new Error('暂时找不到' + venue.name + '，请到预约网站确认。');
+        const id = matches[0].id;
+        const [dates,fields] = await Promise.all([query('/api/court/getTwoDaysDate',{court_id:id},token,active.signal),query('/api/court/getFieldNoList',{product_id:id},token,active.signal)]);
+        if (!Array.isArray(dates) || !Array.isArray(fields?.result)) throw new Error('预约日期或场地信息暂时无法读取。');
+        const days = await Promise.all(dates.map(async day => ({...day,grid:await query('/api/court/getCourtPrice',{product_id:id,venue_id:236,date:day.date},token,active.signal)})));
+        if (version !== requestVersion) return;
+        snapshot = {courtId:id,venueKey:queriedVenueKey,venueName:venue.name,token,version};
+        render(days,fields.result,new Date());
+      } catch (error) {
+        if (version !== requestVersion) return;
+        active.abort();
+        resetResult();
+        if (timedOut) note('查询超时了，请稍后点击“查询场地”重试。','error');
+        else if (error instanceof TypeError) note('连接预约网站失败。请先确认当前网络能打开学校预约网站，再重试；若浏览器提示本地网络访问权限，请按浏览器说明处理。','error');
+        else note(error.message || '查询暂时失败，请重新尝试。','error');
+      } finally {
+        clearTimeout(timeout);
+        token = '';
+        if (version === requestVersion) { loading(false); controller = null; }
+      }
+    }
+    function onInput() {
+      if (bookingPhase === 'preparing' || bookingPhase === 'submitting') return;
+      if ($('booking-dialog').open) $('booking-dialog').close();
+      bookingPhase = ''; review = null;
+      clearTimeout(timer);
+      ++requestVersion;
+      controller?.abort(); controller = null;
+      loading(false); resetResult(); note('');
+      $('clear').hidden = !input.value;
+      if (input.value.trim()) timer = setTimeout(run,500);
+    }
+    input.addEventListener('input',onInput);
+    input.addEventListener('change',onInput);
+    input.addEventListener('keydown',event => { if (event.key === 'Enter') { event.preventDefault(); run(); } });
+    $('query').addEventListener('click',run);
+    $('refresh').addEventListener('click',run);
+    $('clear').addEventListener('click',() => { input.value = ''; onInput(); input.focus(); });
+    $('unselect').addEventListener('click',clearSelection);
+    for (const [key,venue] of Object.entries(VENUES)) $(venue.button).addEventListener('click',() => switchVenue(key));
+    $('continue-booking').addEventListener('click',prepareBooking);
+    $('agree-booking').addEventListener('change',confirmState);
+    $('confirm-booking').addEventListener('click',submitBooking);
+    $('close-booking').addEventListener('click',() => { if (bookingPhase !== 'preparing' && bookingPhase !== 'submitting') $('booking-dialog').close(); });
+    $('booking-dialog').addEventListener('cancel',event => { if (bookingPhase === 'preparing' || bookingPhase === 'submitting') event.preventDefault(); });
+    $('booking-dialog').addEventListener('close',() => { if (bookingPhase !== 'preparing' && bookingPhase !== 'submitting') { bookingPhase = ''; review = null; confirmState(); } });
+    window.addEventListener('pageshow',event => { if (event.persisted) { input.value = ''; onInput(); } });
+    window.addEventListener('pagehide',() => { input.value = ''; snapshot = null; selected = null; review = null; ++requestVersion; controller?.abort(); clearTimeout(timer); });
+  })();
+  </script>
+</body>
+</html>
