@@ -43,7 +43,7 @@
   </main>
   <div id="bottomBar" class="bottom-bar" hidden><div><strong id="totalSummary">尚未选场</strong><small id="moneySummary">选择后可核对各账号</small></div><button id="review" type="button" disabled>核对预约</button></div>
   <dialog id="pasteDialog"><form method="dialog" class="dialog-header"><h2>粘贴账号链接</h2><button aria-label="关闭" class="close-button">×</button></form><p class="muted">每行一个“账号名,完整链接”，与 TXT 格式相同。</p><textarea id="pasteText" placeholder="账号名,https://tycg.zjnu.edu.cn/h5/…" spellcheck="false" autocomplete="off"></textarea><button id="importPasted" class="primary full" type="button">导入这些账号</button></dialog>
-  <dialog id="reviewDialog"><div class="dialog-header"><h2 id="reviewTitle">核对预约</h2><button id="closeReview" type="button" aria-label="关闭" class="close-button">×</button></div><div id="reviewRows"></div><p id="ruleAlert" class="rule-alert" hidden></p><details class="rules"><summary>预约须知与场馆规则</summary><div id="rules"></div></details><label class="agree"><input id="agree" type="checkbox">我已核对各账号的场地、费用，并阅读预约须知</label><p id="submitInfo" role="status" class="muted">确认后，各账号会分别向预约网站提交订单。</p><button id="submit" class="primary full" type="button" disabled>确认提交预约</button></dialog>
+  <dialog id="reviewDialog"><div class="dialog-header"><h2 id="reviewTitle">核对预约</h2><button id="closeReview" type="button" aria-label="关闭" class="close-button">×</button></div><div id="reviewRows"></div><p id="ruleAlert" class="rule-alert" hidden></p><details class="rules"><summary>预约须知与场馆规则</summary><div id="rules"></div></details><label class="agree"><input id="agree" type="checkbox">我已核对各账号的场地、费用，并阅读预约须知</label><p id="submitInfo" role="status" class="muted">确认后，将同时提交所有已核对账号的请求，并分别显示结果。</p><button id="submit" class="primary full" type="button" disabled>确认提交预约</button></dialog>
   <script>(() => {
   'use strict';
   const HOST = 'https://tycg.zjnu.edu.cn';
@@ -373,10 +373,10 @@
     $('agree').disabled = checking || state.submitting || !allValid;
     $('submit').disabled = !$('agree').checked || !allValid || checking || state.submitting;
     $('closeReview').disabled = state.submitting;
-    $('submit').textContent = state.submitting ? '正在逐个提交…' : state.demo ? '模拟提交预约' : '确认提交预约';
-    $('submitInfo').textContent = state.submitting ? '正在逐个提交，请保持本页打开。' : checking ? '正在重新核对每个账号的库存、价格和支付方式…' :
+    $('submit').textContent = state.submitting ? '正在同时提交…' : state.demo ? '模拟提交预约' : '确认提交预约';
+    $('submitInfo').textContent = state.submitting ? '正在同时提交，已收到 ' + state.rows.filter(r => r.done).length + '/' + state.rows.length + ' 个账号的结果。请保持本页打开。' : checking ? '正在重新核对每个账号的库存、价格和支付方式…' :
       state.rows.every(r => r.done) ? '本轮处理完毕。请查看各账号结果；需要支付的订单请分别完成支付。' : !allValid ? '部分账号核对未通过，请关闭后刷新或调整选择。' :
-      state.demo ? '这是演示，不会发送真实预约。' : '确认后，将分别向预约网站提交以上账号的订单。';
+      state.demo ? '这是演示，不会发送真实预约。' : '确认后，将同时向预约网站提交以上账号的订单。';
   }
   async function openReview() {
     const list = eligible(); if (!list.length || state.accounts.some(a => included(a) && a.loading)) return;
@@ -426,34 +426,43 @@
   }
   async function submitReview() {
     if (state.submitting || $('submit').disabled || !$('agree').checked || !state.rows.length || !state.rows.every(r => r.valid && !r.done && r.options.some(p => p.value === r.payWay))) return;
-    state.submitting = true; renderReview(); renderStatus();
-    for (const row of state.rows) {
-      const fingerprint = JSON.stringify([row.venueId, row.date, row.slots.map(s => String(s.price_id)).sort()]);
-      if (row.a.order?.status === 'unknown' || (row.a.order?.fingerprint === fingerprint && ['success', 'payment'].includes(row.a.order.status))) {
-        row.error = true; row.done = true; row.message = '本账号已有相同的提交记录，请先到原站查看订单。'; renderReview(); continue;
-      }
-      row.message = state.demo ? '模拟处理中…' : '正在提交，请勿关闭页面…'; renderReview();
-      row.a.order = { status: 'pending', fingerprint, message: '正在提交' };
-      try {
-        const result = state.demo ? {} : await api(row.a, '/api/pay/CreateOrder', { body: orderBody(row), write: true });
-        row.done = true;
-        let payUrl = '';
-        if (result?.pay_url) { try { const u = new URL(result.pay_url, HOST); if (u.protocol === 'https:' && !u.username && !u.password) payUrl = u.href; } catch {} }
-        row.payUrl = payUrl;
-        const payment = row.payWay === '3';
-        row.message = (state.demo ? '演示：' : '') + (payment ? '订单已创建，请完成支付；未支付不代表预约完成。' : '预约已提交，请到原站查看订单。');
-        row.a.order = { status: payment ? 'payment' : 'success', fingerprint, message: row.message };
-        for (const s of row.slots) { row.a.selected.delete(s.key); const cell = row.a.cells.get(s.key); if (cell) cell.available = false; }
-      } catch (error) {
-        row.done = true; row.error = true;
-        const definitive = error instanceof ApiError && error.definitive;
-        row.message = definitive ? '未提交成功：' + error.message : '提交结果未确认。本页不会重试，请先到原站检查订单。';
-        row.a.order = { status: definitive ? 'rejected' : 'unknown', fingerprint, message: row.message };
-        row.a.message = row.message;
-      }
+    state.submitting = true;
+    try {
+      // Prepare every account before launching requests, without waiting for earlier responses.
+      const jobs = state.rows.map(row => ({ row, body: orderBody(row),
+        fingerprint: JSON.stringify([row.venueId, row.date, row.slots.map(s => String(s.price_id)).sort()]) }));
+      const pending = jobs.filter(({ row, fingerprint }) => {
+        if (['pending', 'unknown'].includes(row.a.order?.status) ||
+          (row.a.order?.fingerprint === fingerprint && ['success', 'payment'].includes(row.a.order.status))) {
+          row.error = true; row.done = true; row.message = '本账号已有相同的提交记录，请先到原站查看订单。'; return false;
+        }
+        row.message = state.demo ? '模拟处理中…' : '正在提交，请勿关闭页面…';
+        row.a.order = { status: 'pending', fingerprint, message: '正在提交' }; return true;
+      });
       renderReview(); renderStatus();
+      await Promise.allSettled(pending.map(async ({ row, body, fingerprint }) => {
+        try {
+          const result = state.demo ? {} : await api(row.a, '/api/pay/CreateOrder', { body, write: true });
+          row.done = true;
+          let payUrl = '';
+          if (result?.pay_url) { try { const u = new URL(result.pay_url, HOST); if (u.protocol === 'https:' && !u.username && !u.password) payUrl = u.href; } catch {} }
+          row.payUrl = payUrl;
+          const payment = row.payWay === '3';
+          row.message = (state.demo ? '演示：' : '') + (payment ? '订单已创建，请完成支付；未支付不代表预约完成。' : '预约已提交，请到原站查看订单。');
+          row.a.order = { status: payment ? 'payment' : 'success', fingerprint, message: row.message };
+          for (const s of row.slots) { row.a.selected.delete(s.key); const cell = row.a.cells.get(s.key); if (cell) cell.available = false; }
+        } catch (error) {
+          row.done = true; row.error = true;
+          const definitive = error instanceof ApiError && error.definitive;
+          row.message = definitive ? '未提交成功：' + error.message : '提交结果未确认。本页不会重试，请先到原站检查订单。';
+          row.a.order = { status: definitive ? 'rejected' : 'unknown', fingerprint, message: row.message };
+          row.a.message = row.message;
+        }
+        renderReview(); renderStatus();
+      }));
+    } finally {
+      state.submitting = false; $('agree').checked = false; renderReview(); renderAll();
     }
-    state.submitting = false; $('agree').checked = false; renderReview(); renderAll();
   }
   $('file').addEventListener('change', async event => {
     const file = event.target.files?.[0]; event.target.value = ''; if (!file) return;
